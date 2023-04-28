@@ -1,3 +1,7 @@
-(self.MyAsyncLib = self.MyAsyncLib || []).push((lib) => {
-  lib.log("Component foo initialized!");
-});
+(self.MyAsyncLib = self.MyAsyncLib || []).push([
+  "foo",
+  (lib) => {
+    lib.log("Component foo initialized!");
+  },
+  []
+]);

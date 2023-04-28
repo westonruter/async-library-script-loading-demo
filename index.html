@@ -6,23 +6,25 @@
     <link rel="icon" href="https://glitch.com/favicon.ico" />
 
     <title>Async Library Loading Demo</title>
-    
+
     <script src="/component-foo.js" async></script>
     <script src="/runtime.js" async></script>
     <script src="/component-bar.js" async></script>
   </head>
   <body>
-    <h1>
-      Async Library Loading Demo
-    </h1>
-    
+    <h1>Async Library Loading Demo</h1>
+
     <pre id="log">Loading...</pre>
 
     <script type="module">
-    (self.MyAsyncLib = self.MyAsyncLib || []).push((lib) => {
-      lib.log( 'Component baz initialized!' );
-    })
+      (self.MyAsyncLib = self.MyAsyncLib || []).push([
+        "baz",
+        async (lib) => {
+          lib.log("Component baz initialized!");
+        },
+        [ "foo", "bar" ]
+      ]);
     </script>
-
   </body>
 </html>
+
