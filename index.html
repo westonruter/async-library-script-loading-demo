@@ -7,22 +7,20 @@
 
     <title>Async Library Loading Demo</title>
     
-    <script src="/component1.js" async></script>
+    <script src="/component-foo.js" async></script>
     <script src="/runtime.js" async></script>
-    <script src="/component2.js" async></script>
+    <script src="/component-bar.js" async></script>
   </head>
   <body>
     <h1>
       Async Library Loading Demo
     </h1>
     
-    <div id="log">
-      Loading...
-    </div>
+    <pre id="log">Loading...</pre>
 
     <script type="module">
-    (self.AMP = self.AMP || []).push(() => {
-      console.info( 'Component 3 initialized!' );
+    (self.MyAsyncLib = self.MyAsyncLib || []).push((lib) => {
+      lib.log( 'Component baz initialized!' );
     })
     </script>
 
