@@ -11,6 +11,9 @@
 
   /**
    * Get deferrals for the provided components.
+   *
+   * @param {string[]} slugs
+   * @return {Array.<{promise: Promise, resolve: Function, reject: Function}>}
    */
   const getComponentDeferrals = (slugs) => {
     const deferrals = [];
@@ -27,21 +30,21 @@
     return deferrals;
   };
 
-  const init = async(slug, component, deps = []) => {
-    const [ deferral ] = getComponentDeferrals( [ slug ] );
-    
+  /**
+   * Register the component and execute it once its dependencies have been executed.
+   *
+   * @param {string} slug
+   * @param {Function} component
+   * @param {?string[]} deps
+   */
+  const init = async (slug, component, deps = []) => {
+    const [deferral] = getComponentDeferrals([slug]);
     const dependencies = getComponentDeferrals(deps);
-    console.log(dependencies.map( ( deferral ) => deferral.promise ))
-    await Promise.all( dependencies.map( ( deferral ) => deferral.promise ) );
-    
 
-    //await Promise.all(ps);
+    await Promise.all(dependencies.map((deferral) => deferral.promise));
 
-    // TODO: Wait for the deps to load.
     component(lib);
-    
-    console.info(deferral)
-    deferral.resolve( component );
+    deferral.resolve(component);
   };
 
   // Execute any components that have been previously registered.
@@ -50,8 +53,8 @@
     init(slug, component, deps);
   }
 
-  // When any subsequent components are registered, execute immediately.
-  lib.push = ([slug, component, deps]) => {
-    init(slug, component, deps);
+  // From now on, when any subsequent components are registered, execute immediately.
+  lib.push = (args) => {
+    init(...args);
   };
 })((self.MyAsyncLib = self.MyAsyncLib || []));
