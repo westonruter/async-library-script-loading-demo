@@ -33,7 +33,7 @@
     <script type="module">
       (self.MyAsyncLib = self.MyAsyncLib || []).push([
         "baz",
-        async (lib) => {
+        (lib) => {
           lib.log("Component baz initialized! (#3, depends on foo and bar)");
         },
         ["foo", "bar"],
