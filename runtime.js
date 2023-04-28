@@ -1,5 +1,5 @@
 (async function (lib) {
-  const componentPromises = {};
+  const componentDeferrals = {};
 
   // Logging for demo.
   const logElement = document.getElementById("log");
@@ -9,40 +9,44 @@
   };
   lib.log("Runtime loaded");
 
-  lib.uponComponentsLoaded = (...componentSlugs) => {
-    const promises = [];
-    for (const slug of componentSlugs) {
-      if (!slug in componentPromises) {
-        componentPromises[slug] = new Promise();
-      }
-    }
-    return promises;
-  };
+  // lib.uponComponentsLoaded = (...componentSlugs) => {
+  //   const promises = [];
+  //   for (const slug of componentSlugs) {
+  //     if (!slug in componentPromises) {
+  //       componentPromises[slug] = new Promise();
+  //     }
+  //   }
+  //   return promises;
+  // };
+  
 
-  const getComponentPromises = async (deps) => {
-    const promises = [];
+  const getComponentDeferrals = (deps) => {
+    const deferrals = [];
     for (const dep of deps) {
-      if (!componentPromises[dep]) {
+      if (!componentDeferrals[dep]) {
         let resolve, reject;
         let promise = new Promise((res, rej) => {
           [resolve, reject] = [res, rej];
         });
-        componentPromises[dep] = { promise, resolve, reject };
+        deferrals[dep] = { promise, resolve, reject };
       }
-      promises.push(componentPromises[dep]);
+      deferrals.push(componentDeferrals[dep]);
     }
-    return promises;
+    return deferrals;
   };
 
   const init = async(slug, component, deps = []) => {
-    if (componentPromises[slug]) {
-      componentPromises[slug].resolve(component);
-    }
+    const [ deferral ] = getComponentDeferrals( [ slug ] );
+    
+    const depDeferrals = getComponentDeferrals(deps);
+    console.info(ps)
 
-    await Promise.all(getComponentPromises(deps));
+    //await Promise.all(ps);
 
     // TODO: Wait for the deps to load.
     component(lib);
+    
+    deferral.resolve( component );
   };
 
   // Execute any components that have been previously registered.
