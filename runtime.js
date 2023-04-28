@@ -19,14 +19,19 @@
     return promises;
   };
   
+  const init = ( slug, component, deps ) => {
+    // TODO: Wait for the deps to load.
+    component( lib );
+  };
+  
   // Execute any components that have been previously registered.
   while ( lib.length) {
     const [ slug, component, deps ] = lib.shift();
-    component(lib);
+    init( slug, component, deps );
   }
   
   // When any subsequent components are registered, execute immediately.
   lib.push = ([slug, component, deps]) => {
-    component(lib);
+    init( slug, component, deps );
   };
 })(self.MyAsyncLib = self.MyAsyncLib || []);
