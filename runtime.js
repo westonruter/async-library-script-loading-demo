@@ -9,28 +9,20 @@
   };
   lib.log("Runtime loaded");
 
-  // lib.uponComponentsLoaded = (...componentSlugs) => {
-  //   const promises = [];
-  //   for (const slug of componentSlugs) {
-  //     if (!slug in componentPromises) {
-  //       componentPromises[slug] = new Promise();
-  //     }
-  //   }
-  //   return promises;
-  // };
-  
-
-  const getComponentDeferrals = (deps) => {
+  /**
+   * Get deferrals for the provided components.
+   */
+  const getComponentDeferrals = (slugs) => {
     const deferrals = [];
-    for (const dep of deps) {
-      if (!componentDeferrals[dep]) {
+    for (const slug of slugs) {
+      if (!componentDeferrals[slug]) {
         let resolve, reject;
         let promise = new Promise((res, rej) => {
           [resolve, reject] = [res, rej];
         });
-        deferrals[dep] = { promise, resolve, reject };
+        componentDeferrals[slug] = { promise, resolve, reject };
       }
-      deferrals.push(componentDeferrals[dep]);
+      deferrals.push(componentDeferrals[slug]);
     }
     return deferrals;
   };
@@ -38,14 +30,17 @@
   const init = async(slug, component, deps = []) => {
     const [ deferral ] = getComponentDeferrals( [ slug ] );
     
-    const depDeferrals = getComponentDeferrals(deps);
-    console.info(ps)
+    const dependencies = getComponentDeferrals(deps);
+    console.log(dependencies.map( ( deferral ) => deferral.promise ))
+    await Promise.all( dependencies.map( ( deferral ) => deferral.promise ) );
+    
 
     //await Promise.all(ps);
 
     // TODO: Wait for the deps to load.
     component(lib);
     
+    console.info(deferral)
     deferral.resolve( component );
   };
 

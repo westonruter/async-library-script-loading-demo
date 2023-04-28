@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://glitch.com/favicon.ico" />
 
-    <title>Async Library Loading Demo</title>
+    <title>Async Library Script Loading Demo</title>
 
-    <script src="/component-foo.js" async></script>
-    <script src="/runtime.js" async></script>
     <script src="/component-bar.js" async></script>
+    <script src="/runtime.js" async></script>
+    <script src="/component-foo.js" async></script>
   </head>
   <body>
-    <h1>Async Library Loading Demo</h1>
+    <h1>Async Library Script Loading Demo</h1>
+
+    <p>
+      The following demonstrates how a library can be built in which its scripts
+      loaded are all loaded asynchronously (with both <code>async</code> and
+      <code>type=module</code>). These scripts can be
+      wired together so that they always run in the same order regardless of the
+      order in which the scripts were downloaded from the network.
+    </p>
 
     <pre id="log">Loading...</pre>
 
@@ -20,11 +28,13 @@
       (self.MyAsyncLib = self.MyAsyncLib || []).push([
         "baz",
         async (lib) => {
-          lib.log("Component baz initialized!");
+          lib.log("Component baz initialized! (#3, depends on foo and bar)");
         },
-        [ "foo", "bar" ]
+        ["foo", "bar"],
       ]);
     </script>
+
+    <hr />
+    <address><a href="https://weston.ruter.net/">@westonruter</a></address>
   </body>
 </html>
-
