@@ -19,7 +19,7 @@
     return promises;
   };
   
-  const init = ( slug, component, deps ) => {
+  const init = ( slug, component, deps  ) => {
     // TODO: Wait for the deps to load.
     component( lib );
   };
